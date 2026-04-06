@@ -29,6 +29,16 @@ public sealed class ExceptionHandlingMiddleware
             _logger.LogWarning(exception, "Validation failure while processing request.");
             await WriteProblemDetailsAsync(context, StatusCodes.Status400BadRequest, exception.Message);
         }
+        catch (KeyNotFoundException exception)
+        {
+            _logger.LogWarning(exception, "Requested resource was not found.");
+            await WriteProblemDetailsAsync(context, StatusCodes.Status404NotFound, exception.Message);
+        }
+        catch (InvalidOperationException exception)
+        {
+            _logger.LogWarning(exception, "Business conflict while processing request.");
+            await WriteProblemDetailsAsync(context, StatusCodes.Status409Conflict, exception.Message);
+        }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Unhandled exception while processing request.");
@@ -47,7 +57,13 @@ public sealed class ExceptionHandlingMiddleware
         var problemDetails = new ProblemDetails
         {
             Status = statusCode,
-            Title = statusCode == StatusCodes.Status400BadRequest ? "Validation error" : "Server error",
+            Title = statusCode switch
+            {
+                StatusCodes.Status400BadRequest => "Du lieu khong hop le",
+                StatusCodes.Status404NotFound => "Khong tim thay du lieu",
+                StatusCodes.Status409Conflict => "Du lieu da ton tai",
+                _ => "Loi he thong"
+            },
             Detail = detail,
             Instance = context.Request.Path
         };
