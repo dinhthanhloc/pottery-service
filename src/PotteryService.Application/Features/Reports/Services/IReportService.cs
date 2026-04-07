@@ -8,4 +8,8 @@ public interface IReportService
     Task<IReadOnlyCollection<SalesQuantityReportItemDto>> GetSalesQuantityByDateRangeAsync(
         SalesQuantityReportRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<ProductRevenueReportDto> GetProductRevenueByDateRangeAsync(
+        ProductRevenueReportRequest request,
+        CancellationToken cancellationToken = default);
 }
