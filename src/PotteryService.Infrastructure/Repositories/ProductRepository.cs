@@ -30,6 +30,16 @@ public sealed class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<Product>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default)
+    {
+        var normalizedIds = ids.Distinct().ToArray();
+
+        return await _dbContext.Products
+            .AsNoTracking()
+            .Where(x => normalizedIds.Contains(x.Id))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Product?> GetByIdForUpdateAsync(long id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Products

@@ -8,6 +8,8 @@ public interface IProductRepository
 
     Task<Product?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyCollection<Product>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default);
+
     Task<Product?> GetByIdForUpdateAsync(long id, CancellationToken cancellationToken = default);
 
     Task<bool> ExistsByNameAsync(string name, long? excludeId = null, CancellationToken cancellationToken = default);
