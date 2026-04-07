@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PotteryService.Application.Features.Categories.Services;
 using PotteryService.Application.Features.Products.Services;
+using PotteryService.Application.Features.Reports.Services;
 using PotteryService.Application.Features.Sales.Services;
 
 namespace PotteryService.Application;
@@ -11,6 +12,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IReportService, ReportService>();
         services.AddScoped<ISaleService, SaleService>();
 
         return services;
