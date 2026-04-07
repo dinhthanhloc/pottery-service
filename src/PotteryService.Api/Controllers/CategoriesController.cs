@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using PotteryService.Application.Categories.Dtos;
-using PotteryService.Application.Categories.Requests;
-using PotteryService.Application.Categories.Services;
+using PotteryService.Application.Features.Categories.Dtos;
+using PotteryService.Application.Features.Categories.Requests;
+using PotteryService.Application.Features.Categories.Services;
 
 namespace PotteryService.Api.Controllers;
 

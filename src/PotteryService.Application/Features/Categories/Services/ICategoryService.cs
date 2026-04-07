@@ -1,7 +1,7 @@
-using PotteryService.Application.Categories.Dtos;
-using PotteryService.Application.Categories.Requests;
+using PotteryService.Application.Features.Categories.Dtos;
+using PotteryService.Application.Features.Categories.Requests;
 
-namespace PotteryService.Application.Categories.Services;
+namespace PotteryService.Application.Features.Categories.Services;
 
 public interface ICategoryService
 {
