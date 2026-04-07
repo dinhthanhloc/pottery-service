@@ -10,11 +10,16 @@ public sealed class ProductService : IProductService
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IProductPriceHistoryRepository _productPriceHistoryRepository;
 
-    public ProductService(ICategoryRepository categoryRepository, IProductRepository productRepository)
+    public ProductService(
+        ICategoryRepository categoryRepository,
+        IProductRepository productRepository,
+        IProductPriceHistoryRepository productPriceHistoryRepository)
     {
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
+        _productPriceHistoryRepository = productPriceHistoryRepository;
     }
 
     public async Task<IReadOnlyCollection<ProductDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -74,6 +79,7 @@ public sealed class ProductService : IProductService
         };
 
         await _productRepository.AddAsync(product, cancellationToken);
+        await AddPriceHistoryAsync(product.Id, product.CurrentPrice, "Initial price", cancellationToken);
 
         return MapToDto(product, category.Name);
     }
@@ -98,6 +104,7 @@ public sealed class ProductService : IProductService
         var normalizedSku = NormalizeSku(request.Sku);
         var normalizedDescription = NormalizeDescription(request.Description);
         var price = NormalizePrice(request.CurrentPrice);
+        var previousPrice = product.CurrentPrice;
 
         if (await _productRepository.ExistsByNameAsync(normalizedName, id, cancellationToken))
         {
@@ -118,6 +125,11 @@ public sealed class ProductService : IProductService
         product.IsActive = request.IsActive;
 
         await _productRepository.UpdateAsync(product, cancellationToken);
+
+        if (previousPrice != product.CurrentPrice)
+        {
+            await AddPriceHistoryAsync(product.Id, product.CurrentPrice, "Price updated", cancellationToken);
+        }
 
         return MapToDto(product, category.Name);
     }
@@ -193,6 +205,19 @@ public sealed class ProductService : IProductService
         }
 
         return currentPrice;
+    }
+
+    private async Task AddPriceHistoryAsync(long productId, decimal price, string note, CancellationToken cancellationToken)
+    {
+        var productPriceHistory = new ProductPriceHistory
+        {
+            ProductId = productId,
+            Price = price,
+            ValidFrom = DateTimeOffset.UtcNow,
+            Note = note
+        };
+
+        await _productPriceHistoryRepository.AddAsync(productPriceHistory, cancellationToken);
     }
 
     private static ProductDto MapToDto(Product product)
