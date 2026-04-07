@@ -1,4 +1,4 @@
-namespace PotteryService.Application.Categories.Requests;
+namespace PotteryService.Application.Features.Categories.Requests;
 
 public sealed record UpdateCategoryRequest(
     string Name,

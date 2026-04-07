@@ -1,9 +1,10 @@
-using PotteryService.Application.Categories.Dtos;
-using PotteryService.Application.Categories.Requests;
+using PotteryService.Application.Common.Exceptions;
 using PotteryService.Application.Common.Interfaces;
+using PotteryService.Application.Features.Categories.Dtos;
+using PotteryService.Application.Features.Categories.Requests;
 using PotteryService.Domain.Entities;
 
-namespace PotteryService.Application.Categories.Services;
+namespace PotteryService.Application.Features.Categories.Services;
 
 public sealed class CategoryService : ICategoryService
 {
@@ -27,7 +28,7 @@ public sealed class CategoryService : ICategoryService
     {
         var category = await _categoryRepository.GetByIdAsync(id, cancellationToken);
 
-        if (category is null)
+        if (category == null)
         {
             throw new KeyNotFoundException($"Category with id '{id}' was not found.");
         }
@@ -42,7 +43,7 @@ public sealed class CategoryService : ICategoryService
 
         if (await _categoryRepository.ExistsByNameAsync(normalizedName, cancellationToken: cancellationToken))
         {
-            throw new InvalidOperationException($"Category name '{normalizedName}' already exists.");
+            throw new ConflictException($"Category name '{normalizedName}' already exists.");
         }
 
         var category = new Category
@@ -60,7 +61,7 @@ public sealed class CategoryService : ICategoryService
     {
         var category = await _categoryRepository.GetByIdForUpdateAsync(id, cancellationToken);
 
-        if (category is null)
+        if (category == null)
         {
             throw new KeyNotFoundException($"Category with id '{id}' was not found.");
         }
@@ -70,7 +71,7 @@ public sealed class CategoryService : ICategoryService
 
         if (await _categoryRepository.ExistsByNameAsync(normalizedName, id, cancellationToken))
         {
-            throw new InvalidOperationException($"Category name '{normalizedName}' already exists.");
+            throw new ConflictException($"Category name '{normalizedName}' already exists.");
         }
 
         category.Name = normalizedName;
@@ -85,7 +86,7 @@ public sealed class CategoryService : ICategoryService
     {
         var category = await _categoryRepository.GetByIdForUpdateAsync(id, cancellationToken);
 
-        if (category is null)
+        if (category == null)
         {
             throw new KeyNotFoundException($"Category with id '{id}' was not found.");
         }

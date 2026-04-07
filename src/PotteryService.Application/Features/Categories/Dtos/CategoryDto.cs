@@ -1,4 +1,4 @@
-namespace PotteryService.Application.Categories.Dtos;
+namespace PotteryService.Application.Features.Categories.Dtos;
 
 public sealed record CategoryDto(
     long Id,

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PotteryService.Application.Common.Exceptions;
 
 namespace PotteryService.Api.Middleware;
 
@@ -34,10 +36,15 @@ public sealed class ExceptionHandlingMiddleware
             _logger.LogWarning(exception, "Requested resource was not found.");
             await WriteProblemDetailsAsync(context, StatusCodes.Status404NotFound, exception.Message);
         }
-        catch (InvalidOperationException exception)
+        catch (ConflictException exception)
         {
             _logger.LogWarning(exception, "Business conflict while processing request.");
             await WriteProblemDetailsAsync(context, StatusCodes.Status409Conflict, exception.Message);
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogWarning(exception, "Database update conflict while processing request.");
+            await WriteProblemDetailsAsync(context, StatusCodes.Status409Conflict, "Database constraint conflict.");
         }
         catch (Exception exception)
         {
