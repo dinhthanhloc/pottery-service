@@ -8,4 +8,10 @@ public interface IReportRepository
         DateTimeOffset from,
         DateTimeOffset to,
         CancellationToken cancellationToken = default);
+
+    Task<ProductRevenueReportDto?> GetProductRevenueByDateRangeAsync(
+        string productName,
+        DateTimeOffset from,
+        DateTimeOffset to,
+        CancellationToken cancellationToken = default);
 }

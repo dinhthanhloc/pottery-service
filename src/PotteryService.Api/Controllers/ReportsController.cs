@@ -29,4 +29,20 @@ public sealed class ReportsController : ControllerBase
 
         return Ok(report);
     }
+
+    [HttpGet("product-revenue")]
+    [ProducesResponseType(typeof(ProductRevenueReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProductRevenueReportDto>> GetProductRevenue(
+        [FromQuery] string productName,
+        [FromQuery] DateTimeOffset from,
+        [FromQuery] DateTimeOffset to,
+        CancellationToken cancellationToken)
+    {
+        var request = new ProductRevenueReportRequest(productName, from, to);
+        var report = await _reportService.GetProductRevenueByDateRangeAsync(request, cancellationToken);
+
+        return Ok(report);
+    }
 }
