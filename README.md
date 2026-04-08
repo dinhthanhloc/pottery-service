@@ -1,14 +1,14 @@
 # Pottery Service
 
-API `.NET 6` cho bai test fresher backend voi chu de so hoa he thong quan ly cua hang gom su.
+API `.NET 6` cho bài test fresher backend với chủ đề số hóa hệ thống quản lý cửa hàng gốm sứ.
 
-Project trien khai theo huong 4 layer:
+Project triển khai theo hướng 4 layer:
 - `Domain`
 - `Application`
 - `Infrastructure`
 - `Api`
 
-## Cong nghe su dung
+## Công nghệ sử dụng
 
 - `.NET 6`
 - `ASP.NET Core Web API`
@@ -17,7 +17,7 @@ Project trien khai theo huong 4 layer:
 - `Swagger`
 - `GitHub Actions`
 
-## Cau truc thu muc
+## Cấu trúc thư mục
 
 ```text
 src
@@ -38,55 +38,59 @@ src
     `-- Program.cs
 ```
 
-## Mo ta database
+## Mô tả database
 
-He thong su dung 5 bang chinh va 1 bang luu lich su gia:
+Hệ thống sử dụng 5 bảng chính và 1 bảng lưu lịch sử giá:
 
-- `categories`: luu danh muc san pham nhu am tra, bat, dia, coc.
-- `products`: luu thong tin san pham, gia hien tai, trang thai hoat dong.
-- `product_price_histories`: luu lich su thay doi gia cua san pham.
-- `sales`: luu thong tin hoa don ban hang.
-- `sale_items`: luu chi tiet tung san pham trong hoa don.
+- `categories`: lưu danh mục sản phẩm như ấm trà, bát, đĩa, cốc.
+- `products`: lưu thông tin sản phẩm, giá hiện tại, trạng thái hoạt động.
+- `product_price_histories`: lưu lịch sử thay đổi giá của sản phẩm.
+- `sales`: lưu thông tin hóa đơn bán hàng.
+- `sale_items`: lưu chi tiết từng sản phẩm trong hóa đơn.
 
-Quan he chinh:
+Quan hệ chính:
 - `categories` 1-n `products`
 - `products` 1-n `product_price_histories`
 - `sales` 1-n `sale_items`
 - `products` 1-n `sale_items`
 
-Luu y nghiep vu:
-- `products.current_price` la gia hien tai cua san pham.
-- `sale_items.unit_price` la gia tai thoi diem ban.
-- Doanh thu lich su duoc tinh tu `sale_items`, nen van dung ngay ca khi gia san pham thay doi ve sau.
+Lưu ý nghiệp vụ:
+- `products.current_price` là giá hiện tại của sản phẩm.
+- `sale_items.unit_price` là giá tại thời điểm bán.
+- Doanh thu lịch sử được tính từ `sale_items`, nên vẫn đúng ngay cả khi giá sản phẩm thay đổi về sau.
 
 ## File SQL trong repo
 
-- [pottery-postgesql.sql](/d:/CODE/pottery-service/pottery-postgesql.sql): script tao database va schema PostgreSQL.
-- [pottery-data.sql](/d:/CODE/pottery-service/pottery-data.sql): du lieu mau de test nghiep vu va report.
+- [pottery-postgesql.sql](/d:/CODE/pottery-service/pottery-postgesql.sql): script tạo database và schema PostgreSQL.
+- [pottery-data.sql](/d:/CODE/pottery-service/pottery-data.sql): dữ liệu mẫu để test nghiệp vụ và report.
 
-## Cach chay project
+Ghi chú:
+- File `pottery-data.sql` đã tạo sẵn dữ liệu nền cho `categories`, `products`, `product_price_histories`, `sales` và `sale_items`.
+- Sau khi import dữ liệu mẫu, có thể test nhanh trực tiếp các nghiệp vụ chính như bán hàng, thống kê số lượng bán và tra cứu doanh thu theo sản phẩm mà không cần nhập tay dữ liệu ban đầu.
 
-### 1. Tao database va schema
+## Cách chạy project
 
-Chay script schema:
+### 1. Tạo database và schema
+
+Chạy script schema:
 
 ```bash
 psql -U postgres -f pottery-postgesql.sql
 ```
 
-Sau do ket noi vao database `test-pv` va import du lieu mau:
+Sau đó kết nối vào database `test-pv` và import dữ liệu mẫu:
 
 ```bash
 psql -U postgres -d test-pv -f pottery-data.sql
 ```
 
-### 2. Cau hinh connection string
+### 2. Cấu hình connection string
 
-File `appsettings*.json` dang duoc ignore khoi Git, nen can tu tao file local:
+File `appsettings*.json` đang được ignore khỏi Git, nên cần tự tạo file local:
 
 `src/PotteryService.Api/appsettings.json`
 
-Vi du:
+Ví dụ:
 
 ```json
 {
@@ -103,13 +107,13 @@ Vi du:
 }
 ```
 
-Hoac co the dung bien moi truong:
+Hoặc có thể dùng biến môi trường:
 
 ```powershell
 $env:ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=test-pv;Username=your_username;Password=your_password"
 ```
 
-### 3. Chay API
+### 3. Chạy API
 
 ```bash
 dotnet restore
